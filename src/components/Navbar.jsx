@@ -706,22 +706,15 @@ const Navbar = () => {
                             <div className="flex-1 overflow-y-auto">
                                 <nav aria-label="Mobile navigation">
                                     {categories.map((category, index) => (
-                                        <motion.a
+                                        <NavLink
+                                            to={category.link}
                                             key={index}
-                                            href={category.link}
-                                            className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                            itemProp="url"
+                                            className={({ isActive }) => `flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 ${isActive ? 'bg-teal-50 dark:bg-teal-900/20 border-l-4 border-l-teal-600' : ''}`}
                                         >
-                                            <span className="font-medium" itemProp="name">
+                                            <span className="font-medium">
                                                 {category.name}
                                             </span>
-                                            {category.name !== "HOME" && (
-                                                <FiChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                            )}
-                                        </motion.a>
+                                        </NavLink>
                                     ))}
 
                                     <motion.a
