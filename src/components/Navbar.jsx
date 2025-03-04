@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FiSearch, FiShoppingCart, FiUser, FiHeart, FiMenu, FiX, FiSun, FiMoon, FiChevronRight } from "react-icons/fi"
+import { NavLink } from "react-router"
 
 const NotFoundSearch = ({ searchQuery }) => {
     const containerVariants = {
@@ -70,12 +71,87 @@ const NotFoundSearch = ({ searchQuery }) => {
             </motion.p>
 
             <motion.button
-                className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-md transition-colors duration-200"
+                className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-md transition-colors duration-200"
                 variants={itemVariants}
             >
                 Browse Categories
             </motion.button>
         </motion.div>
+    )
+}
+
+// Book Pin Navigation Component
+const BookPinNav = () => {
+    const routes = [
+        { name: "HOME", path: "/" },
+        { name: "PRODUCTS", path: "/products" },
+    ]
+
+    const pinVariants = {
+        inactive: {
+            width: "40px",
+            transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+            },
+        },
+        active: {
+            width: "140px",
+            transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+            },
+        },
+    }
+
+    const textVariants = {
+        inactive: {
+            opacity: 0,
+            x: -10,
+            transition: {
+                duration: 0.2,
+            },
+        },
+        active: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.3,
+                delay: 0.1,
+            },
+        },
+    }
+
+    return (
+        <div className="fixed left-0 top-1/5 -translate-y-1/5 z-40 hidden md:flex flex-col gap-4">
+            {routes.map((route) => (
+                <NavLink key={route.path} to={route.path} className={({ isActive }) => `relative`}>
+                    {({ isActive }) => (
+                        <motion.div
+                            className={`flex items-center bg-teal-600 text-white rounded-r-full shadow-md overflow-hidden ${isActive ? "pl-3 pr-6" : "pl-2 pr-4"}`}
+                            initial="inactive"
+                            animate={isActive ? "active" : "inactive"}
+                            variants={pinVariants}
+                        >
+                            <div className="relative flex items-center justify-center min-w-[24px] h-10">
+                                <div className="absolute w-3 h-3 rounded-full bg-white"></div>
+                                <div
+                                    className={`absolute w-5 h-5 rounded-full border-2 border-white ${isActive ? "scale-100" : "scale-75"} transition-transform duration-300`}
+                                ></div>
+                            </div>
+                            <motion.span
+                                className="whitespace-nowrap font-medium ml-1"
+                                variants={textVariants}
+                                initial="inactive"
+                                animate={isActive ? "active" : "inactive"}
+                            >
+                                {route.name}
+                            </motion.span>
+                        </motion.div>
+                    )}
+                </NavLink>
+            ))}
+        </div>
     )
 }
 
@@ -108,14 +184,12 @@ const Navbar = () => {
         localStorage.setItem("darkMode", newDarkMode)
     }
 
-
     useEffect(() => {
         if (typeof window !== "undefined") {
             const savedCartItems = localStorage.getItem("cartItems")
             if (savedCartItems) {
                 setCartItems(JSON.parse(savedCartItems))
             } else {
-
                 const demoItems = [
                     {
                         id: 1,
@@ -160,16 +234,13 @@ const Navbar = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-
     const handleSearch = (e) => {
         e.preventDefault()
         if (searchQuery.trim()) {
-
             if (searchQuery.toLowerCase() === "notfound" || Math.random() > 0.7) {
                 setSearchResults([])
                 setNoResults(true)
             } else {
-
                 const results = [
                     {
                         id: 1,
@@ -206,7 +277,6 @@ const Navbar = () => {
         }
     }
 
-
     const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
 
     const removeFromCart = (id) => {
@@ -217,14 +287,8 @@ const Navbar = () => {
 
     const categories = [
         { name: "HOME", link: "/" },
-        { name: "ATTAR", link: "/attar" },
-        { name: "MEN'S CLOTHING", link: "/mens-clothing" },
-        { name: "PANJABI", link: "/panjabi" },
-        { name: "WINTER 2024", link: "/winter-2024" },
-        { name: "FOODS", link: "/foods" },
-        { name: "OTHERS", link: "/others" },
+        { name: "PRODUCTS", link: "/products" },
     ]
-
 
     const navbarVariants = {
         visible: { y: 0, opacity: 1, transition: { duration: 0.3 } },
@@ -272,7 +336,6 @@ const Navbar = () => {
         exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
     }
 
-
     const emptyCartVariants = {
         initial: { scale: 0.8, opacity: 0 },
         animate: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
@@ -281,6 +344,7 @@ const Navbar = () => {
 
     return (
         <>
+            <BookPinNav />
             <header>
                 <motion.nav
                     className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow-md"
@@ -291,7 +355,7 @@ const Navbar = () => {
                     itemScope
                     itemType="https://schema.org/SiteNavigationElement"
                 >
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between h-16 md:h-20">
                             <div className="flex md:hidden">
                                 <motion.button
@@ -300,7 +364,7 @@ const Navbar = () => {
                                     animate="animate"
                                     whileHover="hover"
                                     custom={1}
-                                    className="text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400"
+                                    className="text-gray-700 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400"
                                     onClick={() => setIsMenuOpen(true)}
                                     aria-expanded={isMenuOpen}
                                     aria-controls="mobile-menu"
@@ -321,17 +385,17 @@ const Navbar = () => {
                                 <a href="/" aria-label="Believer's Sign Home" itemProp="url">
                                     <div className="h-10 w-auto flex items-center">
                                         <div className="relative">
-                                            <div className="h-10 w-10 rounded-full border-2 border-amber-600 dark:border-amber-500 flex items-center justify-center">
+                                            <div className="h-10 w-10 rounded-full border-2 border-teal-600 dark:border-teal-500 flex items-center justify-center">
                                                 <div
-                                                    className="h-7 w-7 bg-amber-600 dark:bg-amber-500"
+                                                    className="h-7 w-7 bg-teal-600 dark:bg-teal-500"
                                                     style={{
                                                         clipPath:
                                                             "polygon(50% 0%, 80% 10%, 100% 35%, 100% 70%, 80% 90%, 50% 100%, 20% 90%, 0% 70%, 0% 35%, 20% 10%)",
                                                     }}
                                                 ></div>
                                             </div>
-                                            <div className="absolute -top-1 -right-1 h-3 w-3 bg-amber-600 dark:bg-amber-500 rounded-full"></div>
-                                            <div className="absolute -bottom-1 -left-1 h-3 w-3 bg-amber-600 dark:bg-amber-500 rounded-full"></div>
+                                            <div className="absolute -top-1 -right-1 h-3 w-3 bg-teal-600 dark:bg-teal-500 rounded-full"></div>
+                                            <div className="absolute -bottom-1 -left-1 h-3 w-3 bg-teal-600 dark:bg-teal-500 rounded-full"></div>
                                         </div>
                                         <span className="ml-2 text-lg font-bold text-gray-900 dark:text-white uppercase" itemProp="name">
                                             Sharp Style
@@ -357,7 +421,7 @@ const Navbar = () => {
                                         id="desktop-search"
                                         type="search"
                                         placeholder="Search for products"
-                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-800 dark:text-white"
+                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-800 dark:text-white"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
@@ -365,13 +429,12 @@ const Navbar = () => {
                                     />
                                     <button
                                         type="submit"
-                                        className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-r-md transition-colors duration-200"
+                                        className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-r-md transition-colors duration-200"
                                         aria-label="Search"
                                     >
                                         <FiSearch className="h-5 w-5" />
                                     </button>
                                 </motion.form>
-
 
                                 <AnimatePresence>
                                     {showSearchResults && (
@@ -404,7 +467,7 @@ const Navbar = () => {
                                                             <div className="ml-4 flex-1">
                                                                 <h4 className="text-sm font-medium text-gray-900 dark:text-white">{result.name}</h4>
                                                                 <div className="flex items-center mt-1">
-                                                                    <span className="text-amber-600 dark:text-amber-500 font-bold">{result.price}৳</span>
+                                                                    <span className="text-teal-600 dark:text-teal-500 font-bold">{result.price}৳</span>
                                                                     <span className="ml-2 text-gray-500 dark:text-gray-400 line-through text-sm">
                                                                         {result.originalPrice}৳
                                                                     </span>
@@ -414,7 +477,7 @@ const Navbar = () => {
                                                     ))}
                                                     {searchResults.length > 0 && (
                                                         <div className="mt-3 text-center">
-                                                            <button className="text-amber-600 dark:text-amber-500 font-medium hover:underline">
+                                                            <button className="text-teal-600 dark:text-teal-500 font-medium hover:underline">
                                                                 VIEW ALL RESULTS
                                                             </button>
                                                         </div>
@@ -426,16 +489,14 @@ const Navbar = () => {
                                 </AnimatePresence>
                             </div>
 
-
                             <div className="flex items-center space-x-4">
-
                                 <motion.button
                                     variants={iconVariants}
                                     initial="initial"
                                     animate="animate"
                                     whileHover="hover"
                                     custom={3}
-                                    className="text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400"
+                                    className="text-gray-700 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400"
                                     onClick={toggleDarkMode}
                                     aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                                 >
@@ -471,13 +532,12 @@ const Navbar = () => {
                                     animate="animate"
                                     whileHover="hover"
                                     custom={4}
-                                    className="hidden md:block text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400"
+                                    className="hidden md:block text-gray-700 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400"
                                     aria-label="My account"
                                     itemProp="url"
                                 >
                                     <FiUser className="h-6 w-6" />
                                 </motion.a>
-
 
                                 <motion.a
                                     href="/wishlist"
@@ -486,13 +546,12 @@ const Navbar = () => {
                                     animate="animate"
                                     whileHover="hover"
                                     custom={5}
-                                    className="hidden md:block text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400"
+                                    className="hidden md:block text-gray-700 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400"
                                     aria-label="Wishlist"
                                     itemProp="url"
                                 >
                                     <FiHeart className="h-6 w-6" />
                                 </motion.a>
-
 
                                 <motion.button
                                     variants={iconVariants}
@@ -500,7 +559,7 @@ const Navbar = () => {
                                     animate="animate"
                                     whileHover="hover"
                                     custom={6}
-                                    className="cart-toggle relative text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400"
+                                    className="cart-toggle relative text-gray-700 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400"
                                     onClick={() => setIsCartOpen(true)}
                                     aria-label={`Shopping cart with ${cartItems.length} items`}
                                     aria-expanded={isCartOpen}
@@ -509,7 +568,7 @@ const Navbar = () => {
                                     <FiShoppingCart className="h-6 w-6" />
                                     {cartItems.length > 0 && (
                                         <motion.div
-                                            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center bg-amber-600 text-white text-xs rounded-full"
+                                            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center bg-teal-600 text-white text-xs rounded-full"
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
                                             transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -537,7 +596,7 @@ const Navbar = () => {
                         aria-modal="true"
                         aria-label="Main menu"
                     >
-                        <motion.div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)} />
+                        <motion.div className="fixed inset-0 bg-gray-600 opacity-50" onClick={() => setIsMenuOpen(false)} />
                         <motion.div
                             className="fixed top-0 left-0 bottom-0 w-full max-w-xs bg-white dark:bg-gray-900 shadow-xl flex flex-col"
                             variants={menuVariants}
@@ -548,9 +607,9 @@ const Navbar = () => {
                             <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                                 <div className="h-8 w-auto flex items-center">
                                     <div className="relative">
-                                        <div className="h-8 w-8 rounded-full border-2 border-amber-600 dark:border-amber-500 flex items-center justify-center">
+                                        <div className="h-8 w-8 rounded-full border-2 border-teal-600 dark:border-teal-500 flex items-center justify-center">
                                             <div
-                                                className="h-5 w-5 bg-amber-600 dark:bg-amber-500"
+                                                className="h-5 w-5 bg-teal-600 dark:bg-teal-500"
                                                 style={{
                                                     clipPath:
                                                         "polygon(50% 0%, 80% 10%, 100% 35%, 100% 70%, 80% 90%, 50% 100%, 20% 90%, 0% 70%, 0% 35%, 20% 10%)",
@@ -558,7 +617,7 @@ const Navbar = () => {
                                             ></div>
                                         </div>
                                     </div>
-                                    <span className="ml-2 text-sm font-bold text-gray-900 dark:text-white">BELIEVER'S SIGN</span>
+                                    <span className="ml-2 text-sm font-bold text-gray-900 dark:text-white">SHARP STYLE</span>
                                 </div>
                                 <button
                                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -569,7 +628,6 @@ const Navbar = () => {
                                 </button>
                             </div>
 
-
                             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                                 <form className="flex" onSubmit={handleSearch} role="search">
                                     <label htmlFor="sidebar-search" className="sr-only">
@@ -579,20 +637,19 @@ const Navbar = () => {
                                         id="sidebar-search"
                                         type="search"
                                         placeholder="Search for products"
-                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-800 dark:text-white"
+                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-800 dark:text-white"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                     <button
                                         type="submit"
-                                        className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-r-md transition-colors duration-200"
+                                        className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-r-md transition-colors duration-200"
                                         aria-label="Search"
                                     >
                                         <FiSearch className="h-5 w-5" />
                                     </button>
                                 </form>
                             </div>
-
 
                             <AnimatePresence>
                                 {showSidebarSearchResults && (
@@ -625,7 +682,7 @@ const Navbar = () => {
                                                         <div className="ml-4 flex-1">
                                                             <h4 className="text-sm font-medium text-gray-900 dark:text-white">{result.name}</h4>
                                                             <div className="flex items-center mt-1">
-                                                                <span className="text-amber-600 dark:text-amber-500 font-bold">{result.price}৳</span>
+                                                                <span className="text-teal-600 dark:text-teal-500 font-bold">{result.price}৳</span>
                                                                 <span className="ml-2 text-gray-500 dark:text-gray-400 line-through text-sm">
                                                                     {result.originalPrice}৳
                                                                 </span>
@@ -635,7 +692,7 @@ const Navbar = () => {
                                                 ))}
                                                 {searchResults.length > 0 && (
                                                     <div className="mt-3 text-center">
-                                                        <button className="text-amber-600 dark:text-amber-500 font-medium hover:underline">
+                                                        <button className="text-teal-600 dark:text-teal-500 font-medium hover:underline">
                                                             VIEW ALL RESULTS
                                                         </button>
                                                     </div>
@@ -701,7 +758,6 @@ const Navbar = () => {
                 )}
             </AnimatePresence>
 
-
             <AnimatePresence>
                 {isCartOpen && (
                     <motion.div
@@ -714,9 +770,9 @@ const Navbar = () => {
                         aria-modal="true"
                         aria-label="Shopping cart"
                     >
-                        <motion.div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsCartOpen(false)} />
+                        <motion.div className="fixed inset-0 bg-gray-600 opacity-50" onClick={() => setIsCartOpen(false)} />
                         <motion.div
-                            className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-900 shadow-xl flex flex-col"
+                            className="fixed top-0 right-0 bottom-0 w-4/5 max-w-md bg-white dark:bg-gray-900 shadow-xl flex flex-col"
                             variants={cartVariants}
                             initial="hidden"
                             animate="visible"
@@ -740,42 +796,39 @@ const Navbar = () => {
                             <div className="flex-1 overflow-y-auto">
                                 {cartItems.length > 0 ? (
                                     <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                                        {cartItems.map(
-                                            (item) =>
-                                            (
-                                                <motion.div
-                                                    key={item.id}
-                                                    className="flex p-4"
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ duration: 0.3 }}
-                                                >
-                                                    <div className="h-16 w-16 bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden">
-                                                        <img
-                                                            src={item.image || "/placeholder.svg"}
-                                                            alt={item.name}
-                                                            className="h-full w-full object-cover"
-                                                        />
+                                        {cartItems.map((item) => (
+                                            <motion.div
+                                                key={item.id}
+                                                className="flex p-4"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                <div className="h-16 w-16 bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden">
+                                                    <img
+                                                        src={item.image || "/placeholder.svg"}
+                                                        alt={item.name}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                </div>
+                                                <div className="ml-4 flex-1">
+                                                    <div className="flex justify-between">
+                                                        <h4 className="text-sm font-medium text-gray-900 dark:text-white\">{item.name}</h4>
+                                                        <button
+                                                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                                                            onClick={() => removeFromCart(item.id)}
+                                                            aria-label={`Remove ${item.name} from cart`}
+                                                        >
+                                                            <FiX className="h-4 w-4" />
+                                                        </button>
                                                     </div>
-                                                    <div className="ml-4 flex-1">
-                                                        <div className="flex justify-between">
-                                                            <h4 className="text-sm font-medium text-gray-900 dark:text-white\">{item.name}</h4>
-                                                            <button
-                                                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                                                                onClick={() => removeFromCart(item.id)}
-                                                                aria-label={`Remove ${item.name} from cart`}
-                                                            >
-                                                                <FiX className="h-4 w-4" />
-                                                            </button>
-                                                        </div>
-                                                        <div className="mt-1 flex items-center">
-                                                            <span className="text-sm text-gray-500 dark:text-gray-400">{item.quantity} ×</span>
-                                                            <span className="ml-1 text-amber-600 dark:text-amber-500 font-bold">{item.price}৳</span>
-                                                        </div>
+                                                    <div className="mt-1 flex items-center">
+                                                        <span className="text-sm text-gray-500 dark:text-gray-400">{item.quantity} ×</span>
+                                                        <span className="ml-1 text-teal-600 dark:text-teal-500 font-bold">{item.price}৳</span>
                                                     </div>
-                                                </motion.div>
-                                            ),
-                                        )}
+                                                </div>
+                                            </motion.div>
+                                        ))}
                                     </div>
                                 ) : (
                                     <motion.div
@@ -802,7 +855,7 @@ const Navbar = () => {
                                         </div>
                                         <p className="text-gray-600 dark:text-gray-400 text-center mb-6">No products in the cart.</p>
                                         <motion.button
-                                            className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-md transition-colors duration-200"
+                                            className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-md transition-colors duration-200"
                                             whileHover="hover"
                                             onClick={() => setIsCartOpen(false)}
                                         >
@@ -816,7 +869,7 @@ const Navbar = () => {
                                 <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                                     <div className="flex justify-between mb-4">
                                         <span className="text-lg font-bold text-gray-900 dark:text-white">Subtotal:</span>
-                                        <span className="text-lg font-bold text-amber-600 dark:text-amber-500">{cartTotal}৳</span>
+                                        <span className="text-lg font-bold text-teal-600 dark:text-teal-500">{cartTotal}৳</span>
                                     </div>
                                     <div className="grid grid-cols-1 gap-2">
                                         <a
@@ -827,7 +880,7 @@ const Navbar = () => {
                                         </a>
                                         <a
                                             href="/checkout"
-                                            className="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 rounded-md transition-colors duration-200 text-center"
+                                            className="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 rounded-md transition-colors duration-200 text-center"
                                         >
                                             CHECKOUT
                                         </a>

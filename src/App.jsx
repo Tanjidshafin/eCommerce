@@ -1,3 +1,4 @@
+import Footer from "./components/Footer"
 import Navbar from "./components/Navbar"
 
 
@@ -11,6 +12,7 @@ function App() {
       <div className="min-h-screen">
 
       </div>
+      <Footer />
     </>
   )
 }
